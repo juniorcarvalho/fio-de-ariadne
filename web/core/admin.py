@@ -1,11 +1,30 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from web.core.models import Kid
+from web.core.models import Kid, KidImage
+
+
+class KidImageInline(admin.TabularInline):
+    model = KidImage
+    fields = ["image", "image_render"]
+    readonly_fields = ["image_render"]
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(KidImageInline, self).get_formset(request, obj, **kwargs)
+        form = formset.form
+        form.base_fields["image"].widget.attrs["accept"] = ".jpg,.jpeg,.png,*.gif"
+        return formset
+
+    def image_render(self, obj):
+        return obj.image_render
+
+    image_render.short_description = "Imagem"
+
+    class Media:
+        pass
 
 
 class KidModelAdmin(admin.ModelAdmin):
-
     list_display = (
         "name",
         "original",
@@ -17,6 +36,7 @@ class KidModelAdmin(admin.ModelAdmin):
         "last_seen_at_city",
         "last_seen_at_state",
         "age_at_occurrence",
+        "first_image",
     )
     list_filter = (
         "eyes",
@@ -26,6 +46,8 @@ class KidModelAdmin(admin.ModelAdmin):
         "last_seen_at_state",
         "age_at_occurrence",
     )
+
+    inlines = [KidImageInline]
 
     def original(self, obj):
         label = "Ver link original"
@@ -41,9 +63,15 @@ class KidModelAdmin(admin.ModelAdmin):
     def skin_display(self, obj):
         return obj.get_skin_display()
 
+    def first_image(self, obj):
+        kid_image = KidImage.objects.filter(kid=obj).first()
+        if kid_image:
+            return kid_image.image_render
+
     eyes_display.short_description = "Cor dos olhos"
     hair_display.short_description = "Cor dos cabelos"
     skin_display.short_description = "Cor da pele"
+    first_image.short_description = "Foto"
 
 
 admin.site.register(Kid, KidModelAdmin)

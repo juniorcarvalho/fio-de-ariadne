@@ -18,6 +18,8 @@ requests = "^2.23.0"
 restless = "^2.1.1"
 scrapy = "^2.0.1"
 whitenoise = {extras = ["brotli"], version = "^5.0.1"}
+django-storages = "^1.9.1"
+boto3 = "^1.12.46"
 
 [tool.poetry.dev-dependencies]
 createnv = "^0.0.1"

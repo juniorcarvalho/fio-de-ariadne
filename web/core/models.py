@@ -1,3 +1,6 @@
+import os
+
+from django.core.validators import FileExtensionValidator
 from django.db.models import (
     CharField,
     DateField,
@@ -6,7 +9,11 @@ from django.db.models import (
     Model,
     TextField,
     URLField,
+    ForeignKey,
+    FileField,
+    CASCADE,
 )
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 
@@ -83,3 +90,28 @@ class Kid(Model):
 
     def __str__(self):
         return self.name
+
+
+def get_file_name_storage(instance, filename):
+    return os.path.join(str(instance.kid.id), filename)
+
+
+class KidImage(Model):
+    kid = ForeignKey(Kid, on_delete=CASCADE, verbose_name="criança")
+    image = FileField(
+        upload_to=get_file_name_storage,
+        validators=[
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "gif"])
+        ],
+    )
+
+    @property
+    def image_render(self):
+        return mark_safe('<img src="%s" width="150" height="150" />' % (self.image.url))
+
+    class Meta:
+        verbose_name = "criança imagem"
+        verbose_name_plural = "criança imagens"
+
+    def __str__(self):
+        return "{0}".format(self.kid.name)
