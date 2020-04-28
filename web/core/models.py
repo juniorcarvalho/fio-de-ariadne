@@ -98,12 +98,13 @@ def get_file_name_storage(instance, filename):
 
 class KidImage(Model):
     kid = ForeignKey(Kid, on_delete=CASCADE, verbose_name="criança")
-    image = FileField(verbose_name='Foto',
-                      upload_to=get_file_name_storage,
-                      validators=[
-                          FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "gif"])
-                      ],
-                      )
+    image = FileField(
+        verbose_name="Foto",
+        upload_to=get_file_name_storage,
+        validators=[
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "gif"])
+        ],
+    )
 
     @property
     def image_render(self):
