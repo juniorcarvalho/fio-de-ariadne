@@ -93,7 +93,7 @@ class Kid(Model):
 
 
 def get_file_name_storage(instance, filename):
-    return Path(instance.kid.id) / filename
+    return Path(str(instance.kid.id)) / filename
 
 
 class KidImage(Model):

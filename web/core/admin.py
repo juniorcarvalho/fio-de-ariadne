@@ -12,16 +12,13 @@ class KidImageInline(admin.TabularInline):
     def get_formset(self, request, obj=None, **kwargs):
         formset = super(KidImageInline, self).get_formset(request, obj, **kwargs)
         form = formset.form
-        form.base_fields["image"].widget.attrs["accept"] = ".jpg,.jpeg,.png,*.gif"
+        form.base_fields["image"].widget.attrs["accept"] = ".jpg,.jpeg,.png,.gif"
         return formset
 
     def image_render(self, obj):
         return obj.image_render
 
     image_render.short_description = "Foto"
-
-    class Media:
-        pass
 
 
 class KidModelAdmin(admin.ModelAdmin):
