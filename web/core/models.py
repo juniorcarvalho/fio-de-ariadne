@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from django.core.validators import FileExtensionValidator
 from django.db.models import (
@@ -93,25 +93,25 @@ class Kid(Model):
 
 
 def get_file_name_storage(instance, filename):
-    return os.path.join(str(instance.kid.id), filename)
+    return Path(instance.kid.id) / filename
 
 
 class KidImage(Model):
     kid = ForeignKey(Kid, on_delete=CASCADE, verbose_name="criança")
-    image = FileField(
-        upload_to=get_file_name_storage,
-        validators=[
-            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "gif"])
-        ],
-    )
+    image = FileField(verbose_name='Foto',
+                      upload_to=get_file_name_storage,
+                      validators=[
+                          FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "gif"])
+                      ],
+                      )
 
     @property
     def image_render(self):
-        return mark_safe('<img src="%s" width="150" height="150" />' % (self.image.url))
+        return mark_safe(f'<img src="{self.image.url}" width="150" height="150" />')
 
     class Meta:
         verbose_name = "criança imagem"
         verbose_name_plural = "criança imagens"
 
     def __str__(self):
-        return "{0}".format(self.kid.name)
+        return self.kid.name

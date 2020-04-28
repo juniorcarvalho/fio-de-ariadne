@@ -18,7 +18,7 @@ class KidImageInline(admin.TabularInline):
     def image_render(self, obj):
         return obj.image_render
 
-    image_render.short_description = "Imagem"
+    image_render.short_description = "Foto"
 
     class Media:
         pass
@@ -65,8 +65,7 @@ class KidModelAdmin(admin.ModelAdmin):
 
     def first_image(self, obj):
         kid_image = KidImage.objects.filter(kid=obj).first()
-        if kid_image:
-            return kid_image.image_render
+        return kid_image.image_render if kid_image else None
 
     eyes_display.short_description = "Cor dos olhos"
     hair_display.short_description = "Cor dos cabelos"
